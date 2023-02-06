@@ -80,7 +80,7 @@ def check_response(response):
     if type(response) != dict:
         raise TypeError('Структура данных не является: dict')
     if key not in response:
-        raise exceptions.KeyError('Отсутсвует ключ: homeworks')
+        raise KeyError('Отсутсвует ключ: homeworks')
     if type(response['homeworks']) != list:
         raise TypeError('Структура данных не является: list')
 
@@ -88,16 +88,11 @@ def check_response(response):
 def parse_status(homework):
     """Функция для получения статуса проверки работы."""
     keys = ['homework_name', 'status']
-    if not keys[0] in homework.keys():
-        logging.error(f'Отсутсвует ключ: {keys[0]}')
-        raise exceptions.KeyError(f'Отсутвует ключ: {keys[0]}')
-
-    if not keys[1] in homework.keys():
-        logging.error(f'Отсутсвует ключ: {keys[1]}')
-        raise exceptions.KeyError(f'Отсутвует ключ: {keys[1]}')
+    for key in keys:
+        if key not in homework.keys():
+            raise KeyError(f'Отсутвует ключ: {keys[0]}')
 
     if not homework[keys[1]] in HOMEWORK_VERDICTS:
-        logging.error('Документация не соответсвует ожидаемой')
         raise exceptions.Documentation_Not_As_Expected(
             'Документация не соответсвует ожидаемой'
         )
@@ -112,7 +107,7 @@ def main():
     check_tokens()
 
     bot = telegram.Bot(token=TELEGRAM_TOKEN)
-    timestamp = 1664124651
+    timestamp = int(time.time())
     error_massage = ''
     while True:
         try:
@@ -126,7 +121,7 @@ def main():
             else:
                 logging.debug('Статус работы не обновился')
         except Exception as error:
-            message = f'Сбой в работе программы: {error}'
+            message = logging.error(f'Сбой в работе программы: {error}')
             if error_massage != message:
                 send_message(bot, message)
         time.sleep(RETRY_PERIOD)
