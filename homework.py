@@ -113,6 +113,7 @@ def main():
         try:
             response = get_api_answer(timestamp)
             check_response(response)
+            timestamp = response['current_date']
             homeworks = response['homeworks']
             if homeworks:
                 homework = homeworks[0]
